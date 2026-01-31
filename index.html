@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valentine?</title>
+    <style>
+        :root {
+            --bg1: #fff1f5;
+            --bg2: #ffe4ec;
+            --card: #ffffffcc;
+            --text: #1f1f1f;
+            --muted: #6b7280;
+            --yes: #22c55e;
+            --yes2: #16a34a;
+            --no: #ef4444;
+            --no2: #dc2626;
+            --shadow: 0 18px 50px rgba(0, 0, 0, .12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 700px at 20% 20%, var(--bg2), transparent 60%),
+                radial-gradient(900px 600px at 80% 60%, var(--bg2), transparent 60%),
+                linear-gradient(135deg, var(--bg1), #fff);
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        .card {
+            width: min(720px, 100%);
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, .7);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            padding: 28px 22px 26px;
+            position: relative;
+        }
+
+        .hearts {
+            position: absolute;
+            inset: -40px -40px auto auto;
+            transform: rotate(12deg);
+            opacity: .35;
+            font-size: 64px;
+            user-select: none;
+            pointer-events: none;
+            filter: blur(.2px);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(28px, 4vw, 44px);
+            letter-spacing: -.02em;
+            text-align: center;
+        }
+
+        p {
+            margin: 0 0 18px;
+            text-align: center;
+            color: var(--muted);
+            font-size: clamp(14px, 2.2vw, 16px);
+            line-height: 1.4;
+        }
+
+        .playground {
+            position: relative;
+            height: 320px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, .7);
+            border: 1px dashed rgba(0, 0, 0, .08);
+            overflow: hidden;
+            padding: 18px;
+        }
+
+        .buttons {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            pointer-events: none;
+        }
+
+        button {
+            pointer-events: auto;
+            border: none;
+            border-radius: 999px;
+            padding: 14px 22px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .12);
+            transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: scale(.97);
+        }
+
+        #yesBtn {
+            background: linear-gradient(180deg, var(--yes), var(--yes2));
+            color: white;
+            min-width: 130px;
+        }
+
+        #yesBtn:hover {
+            filter: brightness(1.05);
+        }
+
+        .no-wrap {
+            position: absolute;
+            left: 52%;
+            top: 58%;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #noBtn {
+            background: linear-gradient(180deg, var(--no), var(--no2));
+            color: white;
+            min-width: 130px;
+        }
+
+        #noBtn.locked {
+            opacity: .55;
+            cursor: not-allowed;
+            filter: grayscale(.15);
+            box-shadow: none;
+        }
+
+        .tooltip {
+            max-width: 260px;
+            background: rgba(17, 24, 39, .92);
+            color: white;
+            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            line-height: 1.25;
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity .14s ease, transform .14s ease;
+            text-align: center;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, .2);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 18px;
+            display: none;
+            text-align: center;
+            padding: 14px 14px;
+            border-radius: 18px;
+            background: rgba(34, 197, 94, .12);
+            border: 1px solid rgba(34, 197, 94, .22);
+            font-weight: 700;
+        }
+
+        .confetti {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .piece {
+            position: absolute;
+            top: -20px;
+            width: 10px;
+            height: 18px;
+            border-radius: 4px;
+            opacity: .95;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+            }
+        }
+
+        .tiny {
+            margin-top: 10px;
+            font-size: 12px;
+            color: rgba(107, 114, 128, .9);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="hearts">💗 💘 💞</div>
+        <h1>Will you be my Valentine? 💘</h1>
+        <p>Choose wisely (the internet is watching).</p>
+
+        <div class="playground" id="playground">
+            <div class="buttons">
+                <button id="yesBtn">Yes 💚</button>
+            </div>
+
+            <div class="no-wrap" id="noWrap" aria-live="polite">
+                <button id="noBtn">No ❤️</button>
+                <div class="tooltip" id="tooltip">Nice try 🙂</div>
+            </div>
+        </div>
+
+        <div class="result" id="result">
+            YAY!!! 💃🕺 I can’t wait — you just made my day 💚
+            <div style="font-weight:600; margin-top:6px; opacity:.8;">
+                (Screenshot this and send it to me 😌)
+            </div>
+        </div>
+
+        <div class="tiny">Tip: Works best on mobile too — try tapping “No”.</div>
+    </div>
+
+    <div class="confetti" id="confetti"></div>
+
+    <script>
+        const TELEPORTS_BEFORE_LOCK = 3;
+
+        const excuses = [
+            "Option currently out of stock.",
+            "Server says: absolutely not.",
+            "This button is on a coffee break ☕",
+            "No permissions (girlfriend role required).",
+            "Try again after a kiss 😌",
+            "Error 143: too cute.",
+            "Request timed out… due to butterflies 🦋",
+            "This action requires cuddles first.",
+        ];
+
+        const playground = document.getElementById("playground");
+        const noWrap = document.getElementById("noWrap");
+        const noBtn = document.getElementById("noBtn");
+        const yesBtn = document.getElementById("yesBtn");
+        const tooltip = document.getElementById("tooltip");
+        const result = document.getElementById("result");
+        const confetti = document.getElementById("confetti");
+
+        let noAttempts = 0;
+        let excuseIndex = 0;
+        let rotateTimer = null;
+
+        function showTooltip(text) {
+            tooltip.textContent = text;
+            tooltip.classList.add("show");
+            window.clearTimeout(showTooltip._t);
+            showTooltip._t = window.setTimeout(() => tooltip.classList.remove("show"), 1200);
+        }
+
+        function nextExcuse() {
+            excuseIndex = (excuseIndex + 1) % excuses.length;
+            return excuses[excuseIndex];
+        }
+
+        function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+        function teleportNo() {
+            const rect = playground.getBoundingClientRect();
+
+            // Keep within safe bounds so it doesn't go offscreen
+            const marginX = 24;
+            const marginY = 28;
+
+            // Estimate noWrap size
+            const w = noWrap.offsetWidth || 180;
+            const h = noWrap.offsetHeight || 70;
+
+            const maxLeft = rect.width - w - marginX;
+            const maxTop = rect.height - h - marginY;
+
+            const left = Math.random() * maxLeft + marginX / 2;
+            const top = Math.random() * maxTop + marginY / 2;
+
+            noWrap.style.left = `${clamp(left, marginX / 2, maxLeft)}px`;
+            noWrap.style.top = `${clamp(top, marginY / 2, maxTop)}px`;
+            noWrap.style.transform = "translate(0, 0)";
+
+            // tiny boop
+            noWrap.animate(
+                [{ transform: "scale(1)" }, { transform: "scale(.92)" }, { transform: "scale(1)" }],
+                { duration: 180, easing: "ease-out" }
+            );
+        }
+
+        function lockNo() {
+            noBtn.classList.add("locked");
+            noBtn.disabled = true;
+
+            // Tooltip rotates forever while locked
+            if (!rotateTimer) {
+                rotateTimer = window.setInterval(() => {
+                    tooltip.textContent = nextExcuse();
+                    tooltip.classList.add("show");
+                }, 900);
+            }
+            tooltip.classList.add("show");
+            tooltip.textContent = "No has been retired. Please select Yes 💚";
+        }
+
+        function makeConfetti() {
+            const pieces = 120;
+            for (let i = 0; i < pieces; i++) {
+                const el = document.createElement("div");
+                el.className = "piece";
+                el.style.left = (Math.random() * 100) + "vw";
+                el.style.animationDuration = (Math.random() * 1.8 + 1.6) + "s";
+                el.style.animationDelay = (Math.random() * 0.4) + "s";
+                el.style.transform = `rotate(${Math.random() * 360}deg)`;
+                // random pastel-ish via hue; no fixed colors list
+                el.style.background = `hsl(${Math.floor(Math.random() * 360)}, 85%, 70%)`;
+                el.style.width = (Math.random() * 8 + 6) + "px";
+                el.style.height = (Math.random() * 12 + 10) + "px";
+                confetti.appendChild(el);
+
+                el.addEventListener("animationend", () => el.remove());
+            }
+        }
+
+        // Make initial position relative to playground
+        // Convert from percent-based CSS to px after layout
+        window.addEventListener("load", () => {
+            // place it somewhere nice initially
+            const rect = playground.getBoundingClientRect();
+            noWrap.style.left = (rect.width * 0.60) + "px";
+            noWrap.style.top = (rect.height * 0.62) + "px";
+            noWrap.style.transform = "translate(-50%, -50%)";
+            // then immediately switch to absolute w/out translate after first teleport
+        });
+
+        // NO: pointerdown catches both click and tap quickly
+        noBtn.addEventListener("pointerdown", (e) => {
+            e.preventDefault();
+
+            if (noBtn.disabled) {
+                // keep showing rotating excuses
+                showTooltip(nextExcuse());
+                return;
+            }
+
+            noAttempts++;
+
+            showTooltip(nextExcuse());
+
+            if (noAttempts <= TELEPORTS_BEFORE_LOCK) {
+                // After first interaction, switch to px anchored positioning
+                noWrap.style.transform = "translate(0,0)";
+                teleportNo();
+            } else {
+                lockNo();
+            }
+        });
+
+        // YES
+        yesBtn.addEventListener("click", () => {
+            if (rotateTimer) window.clearInterval(rotateTimer);
+            rotateTimer = null;
+
+            result.style.display = "block";
+            makeConfetti();
+
+            // Optional: make buttons non-interactive after yes
+            yesBtn.disabled = true;
+            yesBtn.style.opacity = 0.85;
+            noBtn.disabled = true;
+
+            // friendly message in tooltip area
+            tooltip.classList.add("show");
+            tooltip.textContent = "Correct choice 😌💘";
+        });
+    </script>
+</body>
+
+</html>
