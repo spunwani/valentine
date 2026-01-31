@@ -179,6 +179,46 @@
             font-weight: 700;
         }
 
+        /* ✅ Image reveal overlay inside the playground */
+        .yes-reveal {
+            position: absolute;
+            inset: 16px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .72);
+            border: 1px solid rgba(0, 0, 0, .06);
+            z-index: 5;
+            animation: fadeIn .4s ease-out;
+        }
+
+        .yes-reveal.show {
+            display: flex;
+        }
+
+        .yes-reveal img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* change to cover if you want full-bleed */
+            border-radius: 18px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, .15);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         .confetti {
             position: fixed;
             inset: 0;
@@ -226,6 +266,12 @@
                 <button id="noBtn">No 😡</button>
                 <div class="tooltip" id="tooltip">Nice try 🙂</div>
             </div>
+
+            <!-- ✅ Shows after YES is clicked.
+                 Make sure you add the image file to your repo at: images/SimandSahil.jpeg -->
+            <div class="yes-reveal" id="yesReveal" aria-hidden="true">
+                <img src="images/SimandSahil.jpeg" alt="Sim and Sahil 💞" />
+            </div>
         </div>
 
         <div class="result" id="result">
@@ -258,6 +304,7 @@
         const tooltip = document.getElementById("tooltip");
         const result = document.getElementById("result");
         const confetti = document.getElementById("confetti");
+        const yesReveal = document.getElementById("yesReveal");
 
         let noAttempts = 0;
         let excuseIndex = 0;
@@ -389,6 +436,13 @@
             // friendly message in tooltip area
             tooltip.classList.add("show");
             tooltip.textContent = "Correct choice 🧸🥳";
+
+            // ✅ Show the image inside the playground
+            yesReveal.classList.add("show");
+
+            // ✅ Hide buttons so the image is the focus
+            document.querySelector(".buttons").style.display = "none";
+            noWrap.style.display = "none";
         });
     </script>
 </body>
