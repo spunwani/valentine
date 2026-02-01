@@ -202,7 +202,6 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            /* change to cover if you want full-bleed */
             border-radius: 18px;
             box-shadow: 0 14px 40px rgba(0, 0, 0, .15);
         }
@@ -267,8 +266,6 @@
                 <div class="tooltip" id="tooltip">Nice try 🙂</div>
             </div>
 
-            <!-- ✅ Shows after YES is clicked.
-                 Make sure you add the image file to your repo at: images/SimandSahil.jpeg -->
             <div class="yes-reveal" id="yesReveal" aria-hidden="true">
                 <img src="images/SimandSahil.jpeg" alt="Sim and Sahil 💞" />
             </div>
@@ -327,11 +324,9 @@
         function teleportNo() {
             const rect = playground.getBoundingClientRect();
 
-            // Keep within safe bounds so it doesn't go offscreen
             const marginX = 24;
             const marginY = 28;
 
-            // Estimate noWrap size
             const w = noWrap.offsetWidth || 180;
             const h = noWrap.offsetHeight || 70;
 
@@ -345,7 +340,6 @@
             noWrap.style.top = `${clamp(top, marginY / 2, maxTop)}px`;
             noWrap.style.transform = "translate(0, 0)";
 
-            // tiny boop
             noWrap.animate(
                 [{ transform: "scale(1)" }, { transform: "scale(.92)" }, { transform: "scale(1)" }],
                 { duration: 180, easing: "ease-out" }
@@ -356,15 +350,15 @@
             noBtn.classList.add("locked");
             noBtn.disabled = true;
 
-            // Tooltip rotates forever while locked
-            if (!rotateTimer) {
-                rotateTimer = window.setInterval(() => {
-                    tooltip.textContent = nextExcuse();
-                    tooltip.classList.add("show");
-                }, 900);
-            }
+            // ✅ Stop everything and keep one final tooltip line forever
             tooltip.classList.add("show");
             tooltip.textContent = "No button doesn't actually work, OOPS";
+
+            // ✅ Make sure any old interval is stopped (just in case)
+            if (rotateTimer) {
+                window.clearInterval(rotateTimer);
+                rotateTimer = null;
+            }
         }
 
         function makeConfetti() {
@@ -376,7 +370,6 @@
                 el.style.animationDuration = (Math.random() * 1.8 + 1.6) + "s";
                 el.style.animationDelay = (Math.random() * 0.4) + "s";
                 el.style.transform = `rotate(${Math.random() * 360}deg)`;
-                // random pastel-ish via hue; no fixed colors list
                 el.style.background = `hsl(${Math.floor(Math.random() * 360)}, 85%, 70%)`;
                 el.style.width = (Math.random() * 8 + 6) + "px";
                 el.style.height = (Math.random() * 12 + 10) + "px";
@@ -386,33 +379,27 @@
             }
         }
 
-        // Make initial position relative to playground
-        // Convert from percent-based CSS to px after layout
         window.addEventListener("load", () => {
-            // place it somewhere nice initially
             const rect = playground.getBoundingClientRect();
             noWrap.style.left = (rect.width * 0.60) + "px";
             noWrap.style.top = (rect.height * 0.62) + "px";
             noWrap.style.transform = "translate(-50%, -50%)";
-            // then immediately switch to absolute w/out translate after first teleport
         });
 
-        // NO: pointerdown catches both click and tap quickly
         noBtn.addEventListener("pointerdown", (e) => {
             e.preventDefault();
 
+            // ✅ If locked, do NOT change the tooltip text
             if (noBtn.disabled) {
-                // keep showing rotating excuses
-                showTooltip(nextExcuse());
+                tooltip.classList.add("show");
                 return;
             }
 
             noAttempts++;
 
-            showTooltip(nextExcuse());
-
+            // Teleport for the first N attempts (and show rotating excuses)
             if (noAttempts <= TELEPORTS_BEFORE_LOCK) {
-                // After first interaction, switch to px anchored positioning
+                showTooltip(nextExcuse());
                 noWrap.style.transform = "translate(0,0)";
                 teleportNo();
             } else {
@@ -420,7 +407,6 @@
             }
         });
 
-        // YES
         yesBtn.addEventListener("click", () => {
             if (rotateTimer) window.clearInterval(rotateTimer);
             rotateTimer = null;
@@ -428,19 +414,14 @@
             result.style.display = "block";
             makeConfetti();
 
-            // Optional: make buttons non-interactive after yes
             yesBtn.disabled = true;
             yesBtn.style.opacity = 0.85;
             noBtn.disabled = true;
 
-            // friendly message in tooltip area
             tooltip.classList.add("show");
             tooltip.textContent = "Correct choice 🧸🥳";
 
-            // ✅ Show the image inside the playground
             yesReveal.classList.add("show");
-
-            // ✅ Hide buttons so the image is the focus
             document.querySelector(".buttons").style.display = "none";
             noWrap.style.display = "none";
         });
