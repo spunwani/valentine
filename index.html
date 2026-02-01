@@ -281,6 +281,11 @@
         <div class="tiny">Tip: Tapping No probably won't work Simmy! Try it a couple times! 😋 </div>
     </div>
 
+    <!-- 🎵 Add your mp3 to the repo at: audio/ILikeMeBetter.mp3 -->
+    <audio id="yesSong" preload="auto">
+        <source src="audio/ILikeMeBetter.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="confetti" id="confetti"></div>
 
     <script>
@@ -302,6 +307,7 @@
         const result = document.getElementById("result");
         const confetti = document.getElementById("confetti");
         const yesReveal = document.getElementById("yesReveal");
+        const yesSong = document.getElementById("yesSong");
 
         let noAttempts = 0;
         let excuseIndex = 0;
@@ -350,11 +356,9 @@
             noBtn.classList.add("locked");
             noBtn.disabled = true;
 
-            // ✅ Stop everything and keep one final tooltip line forever
             tooltip.classList.add("show");
             tooltip.textContent = "No button doesn't actually work, OOPS";
 
-            // ✅ Make sure any old interval is stopped (just in case)
             if (rotateTimer) {
                 window.clearInterval(rotateTimer);
                 rotateTimer = null;
@@ -389,7 +393,6 @@
         noBtn.addEventListener("pointerdown", (e) => {
             e.preventDefault();
 
-            // ✅ If locked, do NOT change the tooltip text
             if (noBtn.disabled) {
                 tooltip.classList.add("show");
                 return;
@@ -397,7 +400,6 @@
 
             noAttempts++;
 
-            // Teleport for the first N attempts (and show rotating excuses)
             if (noAttempts <= TELEPORTS_BEFORE_LOCK) {
                 showTooltip(nextExcuse());
                 noWrap.style.transform = "translate(0,0)";
@@ -420,6 +422,16 @@
 
             tooltip.classList.add("show");
             tooltip.textContent = "Correct choice 🧸🥳";
+
+            // 🎵 Play the song on YES (allowed because it’s a user click)
+            try {
+                yesSong.currentTime = 0;
+                yesSong.volume = 0.9; // 0.0 - 1.0
+                yesSong.play().catch(() => {
+                    tooltip.textContent = "Correct choice 🧸🥳 (tap once more for music)";
+                    tooltip.classList.add("show");
+                });
+            } catch (_) { }
 
             yesReveal.classList.add("show");
             document.querySelector(".buttons").style.display = "none";
